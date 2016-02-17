@@ -1,5 +1,6 @@
 package nahama.starwoods.itemblock;
 
+import nahama.starwoods.core.StarWoodsConfigCore;
 import nahama.starwoods.manager.StarWoodsTreeManager;
 import nahama.starwoods.util.Util;
 import net.minecraft.block.Block;
@@ -7,10 +8,18 @@ import net.minecraft.item.ItemBlockWithMetadata;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
-public class ItemStarWoodsLog extends ItemBlockWithMetadata {
+public class ItemStarWoodsLeaves extends ItemBlockWithMetadata {
 
-	public ItemStarWoodsLog(Block block) {
+	public ItemStarWoodsLeaves(Block block) {
 		super(block, block);
+	}
+
+	/** メタデータを返す。 */
+	@Override
+	public int getMetadata(int meta) {
+		if (StarWoodsConfigCore.canLeavesDecay)
+			return meta | 4;
+		return meta;
 	}
 
 	/** 表示名を返す。 */
@@ -23,15 +32,11 @@ public class ItemStarWoodsLog extends ItemBlockWithMetadata {
 		} catch (Exception e) {
 			Util.error("Error on getting display name.", "ItemStarWoodsSapling");
 		}
-		int meta = itemStack.getItemDamage();
-		ItemStack product = StarWoodsTreeManager.getProduct((meta % StarWoodsTreeManager.LOG) + num);
+		ItemStack product = StarWoodsTreeManager.getProduct((itemStack.getItemDamage() % StarWoodsTreeManager.LEAVES) + num);
 		String name = "starwoods.unknown";
 		if (product != null)
 			name = product.getUnlocalizedName() + ".name";
-		String s = "starwoods.log.natural";
-		if (meta < 12)
-			s = "starwoods.log";
-		return StatCollector.translateToLocal(name) + StatCollector.translateToLocal(s);
+		return StatCollector.translateToLocal(name) + StatCollector.translateToLocal("starwoods.leaves");
 	}
 
 }

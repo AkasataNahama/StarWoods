@@ -1,11 +1,11 @@
 package nahama.starwoods.creativetab;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import nahama.starwoods.core.StarWoodsBlockCore;
 import nahama.starwoods.core.StarWoodsItemCore;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class StarWoodsTab extends CreativeTabs {
 
@@ -16,14 +16,14 @@ public class StarWoodsTab extends CreativeTabs {
 		this.isBlock = isBlock;
 	}
 
-	/**アイコンの設定*/
-	@SideOnly(Side.CLIENT)
+	/** アイコンのアイテムを返す。 */
 	@Override
+	@SideOnly(Side.CLIENT)
 	public Item getTabIconItem() {
 		if (isBlock)
-			return Item.getItemFromBlock(StarWoodsBlockCore.crystallizer);
+			return Item.getItemFromBlock(StarWoodsBlockCore.plankMysterious);
 		else
-			return StarWoodsItemCore.itemStarWoods;
+			return StarWoodsItemCore.material;
 	}
 
 }

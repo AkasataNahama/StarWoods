@@ -2,14 +2,15 @@ package nahama.starwoods.inventory;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import nahama.starwoods.tileentity.TileEntityCrystallizer;
+import nahama.starwoods.tileentity.TileEntityVEInjector;
+import nahama.starwoods.util.Util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerCrystallizer extends Container {
+public class ContainerVEInjector extends Container {
 
 	/** インベントリの第一スロットの番号 */
 	private static final int index0 = 0;
@@ -20,15 +21,14 @@ public class ContainerCrystallizer extends Container {
 	/** このコンテナの全体のスロット数 */
 	private static final int index3 = 39;
 
-	private TileEntityCrystallizer tileEntity;
-	private int lastSmeltTime;
-	private int lastBurnTime;
-	private int lastItemBurnTime;
+	private TileEntityVEInjector tileEntity;
+	private int lastHoldingVE;
+	private int lastInjectingTime;
 
-	public ContainerCrystallizer(EntityPlayer player, TileEntityCrystallizer tileEntity) {
+	public ContainerVEInjector(EntityPlayer player, TileEntityVEInjector tileEntity) {
 		this.tileEntity = tileEntity;
-		this.addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
-		this.addSlotToContainer(new Slot(tileEntity, 1, 56, 53));
+		this.addSlotToContainer(new Slot(tileEntity, 0, 36, 34));
+		this.addSlotToContainer(new Slot(tileEntity, 1, 60, 34));
 		this.addSlotToContainer(new SlotUnputable(tileEntity, 2, 116, 35));
 		int i;
 		for (i = 0; i < 3; ++i) {
@@ -44,9 +44,8 @@ public class ContainerCrystallizer extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting iCrafting) {
 		super.addCraftingToCrafters(iCrafting);
-		iCrafting.sendProgressBarUpdate(this, 0, tileEntity.smeltTime);
-		iCrafting.sendProgressBarUpdate(this, 1, tileEntity.burnTime);
-		iCrafting.sendProgressBarUpdate(this, 2, tileEntity.currentItemBurnTime);
+		iCrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
+		iCrafting.sendProgressBarUpdate(this, 1, tileEntity.getInjectingTime());
 	}
 
 	@Override
@@ -54,32 +53,25 @@ public class ContainerCrystallizer extends Container {
 		super.detectAndSendChanges();
 		for (int i = 0; i < crafters.size(); ++i) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
-			if (lastSmeltTime != tileEntity.smeltTime) {
-				icrafting.sendProgressBarUpdate(this, 0, tileEntity.smeltTime);
+			if (lastHoldingVE != tileEntity.getHoldingVE()) {
+				icrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
 			}
-			if (lastBurnTime != tileEntity.burnTime) {
-				icrafting.sendProgressBarUpdate(this, 1, tileEntity.burnTime);
-			}
-			if (lastItemBurnTime != tileEntity.currentItemBurnTime) {
-				icrafting.sendProgressBarUpdate(this, 2, tileEntity.currentItemBurnTime);
+			if (lastInjectingTime != tileEntity.getInjectingTime()) {
+				icrafting.sendProgressBarUpdate(this, 1, tileEntity.getInjectingTime());
 			}
 		}
-		lastSmeltTime = tileEntity.smeltTime;
-		lastBurnTime = tileEntity.burnTime;
-		lastItemBurnTime = tileEntity.currentItemBurnTime;
+		lastHoldingVE = tileEntity.getHoldingVE();
+		lastInjectingTime = tileEntity.getInjectingTime();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(int par1, int par2) {
 		if (par1 == 0) {
-			tileEntity.smeltTime = par2;
+			tileEntity.setHoldingVE(par2);
 		}
 		if (par1 == 1) {
-			tileEntity.burnTime = par2;
-		}
-		if (par1 == 2) {
-			tileEntity.currentItemBurnTime = par2;
+			tileEntity.setInjectingTime(par2);
 		}
 	}
 
@@ -99,14 +91,9 @@ public class ContainerCrystallizer extends Container {
 				if (!this.mergeItemStack(itemStack1, index1, index3, true)) {
 					return null;
 				}
-				slot.onSlotChange(itemStack1, itemStack);
 			} else if (slotNumber != 1 && slotNumber != 0) {
-				if (tileEntity.getCrystallizingResult(itemStack1) != null) {
+				if (Util.isItemStackSapling(itemStack1)) {
 					if (!this.mergeItemStack(itemStack1, 0, 1, false)) {
-						return null;
-					}
-				} else if (tileEntity.isItemFuel(itemStack1)) {
-					if (!this.mergeItemStack(itemStack1, 1, 2, false)) {
 						return null;
 					}
 				} else if (slotNumber >= index1 && slotNumber < index2) {

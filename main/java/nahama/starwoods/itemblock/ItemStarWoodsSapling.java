@@ -1,36 +1,50 @@
 package nahama.starwoods.itemblock;
 
-import nahama.starwoods.Log;
+import nahama.starwoods.block.BlockStarWoodsSapling;
+import nahama.starwoods.manager.StarWoodsTreeManager;
+import nahama.starwoods.util.Util;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlockWithMetadata;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 
 public class ItemStarWoodsSapling extends ItemBlockWithMetadata {
 
+	private int generalNum;
+
 	public ItemStarWoodsSapling(Block block) {
 		super(block, block);
+		if (block instanceof BlockStarWoodsSapling)
+			generalNum = ((BlockStarWoodsSapling) block).getBaseNum();
 	}
 
+	/** 表示名を返す。 */
 	@Override
-	public String getUnlocalizedName(ItemStack itemStack) {
+	public String getItemStackDisplayName(ItemStack itemStack) {
 		String[] str = super.getUnlocalizedName(itemStack).split(":");
-		int type = -1;
+		int num = -1;
 		try {
-			type = Integer.parseInt(str[1]);
+			num = Integer.parseInt(str[1]);
 		} catch (Exception e) {
-			Log.error("UnlocalizedName setting error", "ItemStarWoodsSapling", true);
-			Log.error(e.toString());
+			Util.error("Error on getting display name.", "ItemStarWoodsSapling");
 		}
+		ItemStack product = StarWoodsTreeManager.getProduct((itemStack.getItemDamage() % StarWoodsTreeManager.SAPLING) + num);
+		String name = "starwoods.unknown";
+		if (product != null)
+			name = product.getUnlocalizedName() + ".name";
+		return StatCollector.translateToLocal(name) + StatCollector.translateToLocal("starwoods.sapling");
+	}
 
-		int meta = itemStack.getItemDamage();
-		int number = meta + type;
+	/** 色を返す。 */
+	@Override
+	public int getColorFromItemStack(ItemStack itemStack, int par2) {
+		return StarWoodsTreeManager.getColor((itemStack.getItemDamage() % StarWoodsTreeManager.SAPLING) + generalNum);
+	}
 
-		switch (meta / 8) {
-		case 1:
-			number = (meta % 8) + type + 64;
-		}
-
-		return str[0] + "." + number;
+	public static int getGeneralNum(ItemStack sapling) {
+		if (!(sapling.getItem() instanceof ItemStarWoodsSapling))
+			return -1;
+		return ((ItemStarWoodsSapling) sapling.getItem()).generalNum + (sapling.getItemDamage() % StarWoodsTreeManager.SAPLING);
 	}
 
 }

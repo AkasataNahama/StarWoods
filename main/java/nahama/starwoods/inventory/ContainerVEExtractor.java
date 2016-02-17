@@ -2,34 +2,32 @@ package nahama.starwoods.inventory;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import nahama.starwoods.tileentity.TileEntityCrystallizer;
+import nahama.starwoods.manager.StarWoodsVEManager;
+import nahama.starwoods.tileentity.TileEntityVEExtractor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerCrystallizer extends Container {
+public class ContainerVEExtractor extends Container {
 
 	/** インベントリの第一スロットの番号 */
 	private static final int index0 = 0;
 	/** プレイヤーのインベントリの第一スロットの番号 */
-	private static final int index1 = 3;
+	private static final int index1 = 1;
 	/** クイックスロットの第一スロットの番号 */
-	private static final int index2 = 30;
+	private static final int index2 = 28;
 	/** このコンテナの全体のスロット数 */
-	private static final int index3 = 39;
+	private static final int index3 = 37;
 
-	private TileEntityCrystallizer tileEntity;
-	private int lastSmeltTime;
-	private int lastBurnTime;
-	private int lastItemBurnTime;
+	private TileEntityVEExtractor tileEntity;
+	private int lastHoldingVE;
+	private int lastExtractingTime;
 
-	public ContainerCrystallizer(EntityPlayer player, TileEntityCrystallizer tileEntity) {
+	public ContainerVEExtractor(EntityPlayer player, TileEntityVEExtractor tileEntity) {
 		this.tileEntity = tileEntity;
-		this.addSlotToContainer(new Slot(tileEntity, 0, 56, 17));
-		this.addSlotToContainer(new Slot(tileEntity, 1, 56, 53));
-		this.addSlotToContainer(new SlotUnputable(tileEntity, 2, 116, 35));
+		this.addSlotToContainer(new Slot(tileEntity, 0, 80, 49));
 		int i;
 		for (i = 0; i < 3; ++i) {
 			for (int j = 0; j < 9; ++j) {
@@ -44,9 +42,8 @@ public class ContainerCrystallizer extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting iCrafting) {
 		super.addCraftingToCrafters(iCrafting);
-		iCrafting.sendProgressBarUpdate(this, 0, tileEntity.smeltTime);
-		iCrafting.sendProgressBarUpdate(this, 1, tileEntity.burnTime);
-		iCrafting.sendProgressBarUpdate(this, 2, tileEntity.currentItemBurnTime);
+		iCrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
+		iCrafting.sendProgressBarUpdate(this, 1, tileEntity.getExtractingTime());
 	}
 
 	@Override
@@ -54,32 +51,25 @@ public class ContainerCrystallizer extends Container {
 		super.detectAndSendChanges();
 		for (int i = 0; i < crafters.size(); ++i) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
-			if (lastSmeltTime != tileEntity.smeltTime) {
-				icrafting.sendProgressBarUpdate(this, 0, tileEntity.smeltTime);
+			if (lastHoldingVE != tileEntity.getHoldingVE()) {
+				icrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
 			}
-			if (lastBurnTime != tileEntity.burnTime) {
-				icrafting.sendProgressBarUpdate(this, 1, tileEntity.burnTime);
-			}
-			if (lastItemBurnTime != tileEntity.currentItemBurnTime) {
-				icrafting.sendProgressBarUpdate(this, 2, tileEntity.currentItemBurnTime);
+			if (lastExtractingTime != tileEntity.getExtractingTime()) {
+				icrafting.sendProgressBarUpdate(this, 1, tileEntity.getExtractingTime());
 			}
 		}
-		lastSmeltTime = tileEntity.smeltTime;
-		lastBurnTime = tileEntity.burnTime;
-		lastItemBurnTime = tileEntity.currentItemBurnTime;
+		lastHoldingVE = tileEntity.getHoldingVE();
+		lastExtractingTime = tileEntity.getExtractingTime();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(int par1, int par2) {
 		if (par1 == 0) {
-			tileEntity.smeltTime = par2;
+			tileEntity.setHoldingVE(par2);;
 		}
 		if (par1 == 1) {
-			tileEntity.burnTime = par2;
-		}
-		if (par1 == 2) {
-			tileEntity.currentItemBurnTime = par2;
+			tileEntity.setExtractingTime(par2);
 		}
 	}
 
@@ -95,18 +85,13 @@ public class ContainerCrystallizer extends Container {
 		if (slot != null && slot.getHasStack()) {
 			ItemStack itemStack1 = slot.getStack();
 			itemStack = itemStack1.copy();
-			if (slotNumber == 2) {
+			if (slotNumber == index0) {
 				if (!this.mergeItemStack(itemStack1, index1, index3, true)) {
 					return null;
 				}
-				slot.onSlotChange(itemStack1, itemStack);
-			} else if (slotNumber != 1 && slotNumber != 0) {
-				if (tileEntity.getCrystallizingResult(itemStack1) != null) {
-					if (!this.mergeItemStack(itemStack1, 0, 1, false)) {
-						return null;
-					}
-				} else if (tileEntity.isItemFuel(itemStack1)) {
-					if (!this.mergeItemStack(itemStack1, 1, 2, false)) {
+			} else {
+				if (StarWoodsVEManager.isItemStackHoldingVE(itemStack1)) {
+					if (!this.mergeItemStack(itemStack1, index0, index1, false)) {
 						return null;
 					}
 				} else if (slotNumber >= index1 && slotNumber < index2) {
@@ -116,8 +101,6 @@ public class ContainerCrystallizer extends Container {
 				} else if (slotNumber >= index2 && slotNumber < index3 && !this.mergeItemStack(itemStack1, index1, index2, false)) {
 					return null;
 				}
-			} else if (!this.mergeItemStack(itemStack1, index1, index3, false)) {
-				return null;
 			}
 
 			if (itemStack1.stackSize == 0) {

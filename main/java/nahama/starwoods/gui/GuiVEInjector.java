@@ -2,20 +2,20 @@ package nahama.starwoods.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import nahama.starwoods.inventory.ContainerCrystallizer;
-import nahama.starwoods.tileentity.TileEntityCrystallizer;
+import nahama.starwoods.inventory.ContainerVEInjector;
+import nahama.starwoods.tileentity.TileEntityVEInjector;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
-public class GuiCrystallizer extends GuiContainer {
+public class GuiVEInjector extends GuiContainer {
 
-	private TileEntityCrystallizer tileEntity;
-	private static final ResourceLocation GUITEXTURE = new ResourceLocation("textures/gui/container/furnace.png");
+	private TileEntityVEInjector tileEntity;
+	private static final ResourceLocation GUITEXTURE = new ResourceLocation("starwoods:textures/gui/container/injector.png");
 
-	public GuiCrystallizer(EntityPlayer player, TileEntityCrystallizer tileEntity) {
-		super(new ContainerCrystallizer(player, tileEntity));
+	public GuiVEInjector(EntityPlayer player, TileEntityVEInjector tileEntity) {
+		super(new ContainerVEInjector(player, tileEntity));
 		this.tileEntity = tileEntity;
 	}
 
@@ -25,6 +25,8 @@ public class GuiCrystallizer extends GuiContainer {
 		String s = tileEntity.hasCustomInventoryName() ? tileEntity.getInventoryName() : StatCollector.translateToLocal(tileEntity.getInventoryName());
 		fontRendererObj.drawString(s, xSize / 2 - fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
 		fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96 + 2, 4210752);
+		s = tileEntity.getHoldingVE() + " VE";
+		fontRendererObj.drawString(s, 168 - fontRendererObj.getStringWidth(s), 60, 4210752);
 	}
 
 	/** 背面レイヤーを描画する処理。 */
@@ -36,14 +38,8 @@ public class GuiCrystallizer extends GuiContainer {
 		int l = (height - ySize) / 2;
 		this.drawTexturedModalRect(k, l, 0, 0, xSize, ySize);
 		int i1;
-		if (tileEntity.isBurning()) {
-			// 燃焼中なら燃料の残り時間を描く。
-			i1 = tileEntity.getBurnTimeRemainingScaled(12);
-			this.drawTexturedModalRect(k + 56, l + 36 + 12 - i1, 176, 12 - i1, 14, i1 + 2);
-		}
-		// 製錬作業の矢印を描く。
-		i1 = tileEntity.getSmeltProgressScaled(24);
-		this.drawTexturedModalRect(k + 79, l + 34, 176, 14, i1 + 1, 16);
+		i1 = tileEntity.getInjectProgressScaled(24);
+		this.drawTexturedModalRect(k + 79, l + 34, 176, 0, i1 + 1, 16);
 	}
 
 }
