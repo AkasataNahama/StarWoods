@@ -46,8 +46,8 @@ public class StarWoodsRecipeCore {
 		GameRegistry.addRecipe(new ShapedOreRecipe(BLOCK.machine,
 				"LLL", "LIL", "LLL", 'L', "treeLeaves", 'I', "blockIron"));
 
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BLOCK.machine, 8),
-				"LLL", "LGL", "LLL", 'L', "treeLeaves", 'I', "blockGold"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BLOCK.machine, 1, 8),
+				"LLL", "LGL", "LLL", 'L', "treeLeaves", 'G', "blockGold"));
 
 		// 木炭の塊
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ITEM.material, 1, 1),
@@ -71,6 +71,16 @@ public class StarWoodsRecipeCore {
 		// 木材のレシピ
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(BLOCK.plankMysterious, 4),
 				"X", 'X', "logStarWoods"));
+
+		// 樹液採りのレシピ
+		GameRegistry.addRecipe(new ShapedOreRecipe(ITEM.tapperIron,
+				" SM", "MMM", "M  ", 'S', new ItemStack(ITEM.material, 1, 0), 'M', "ingotIron"));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(ITEM.tapperGold,
+				" SM", "MMM", "M  ", 'S', new ItemStack(ITEM.material, 1, 0), 'M', "ingotGold"));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(ITEM.tapperDiamond,
+				" SM", "MMM", "M  ", 'S', new ItemStack(ITEM.material, 1, 0), 'M', "gemDiamond"));
 
 		// 燃料
 		GameRegistry.registerFuelHandler(new IFuelHandler() {

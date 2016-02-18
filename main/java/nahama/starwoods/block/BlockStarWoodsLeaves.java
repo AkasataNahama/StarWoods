@@ -103,18 +103,18 @@ public class BlockStarWoodsLeaves extends BlockLeaves {
 			super.harvestBlock(world, player, x, y, z, meta);
 		// プレイヤーが持っているアイテムを取得する。
 		Item usingItem = itemStack.getItem();
-		if (usingItem instanceof ItemPruningScissors) {
-			// 枝切りハサミで破壊したのなら、葉ブロックとしてドロップする。
-			ItemStack dropItem = this.createStackedBlock(meta);
-			this.dropBlockAsItem(world, x, y, z, dropItem);
-			itemStack.damageItem(1, player);
-		} else if (usingItem == Items.shears) {
-			// バニラのハサミで破壊したのなら、耐久値を消費させて通常の処理をする。
-			itemStack.damageItem(1, player);
+		if (!(usingItem instanceof ItemPruningScissors)) {
+			// バニラのハサミで破壊したのなら、耐久値を消費させる。
+			if (usingItem == Items.shears)
+				itemStack.damageItem(1, player);
+			// 通常の処理をする。
 			super.harvestBlock(world, player, x, y, z, meta);
+			return;
 		}
-		// 通常の処理をする。
-		super.harvestBlock(world, player, x, y, z, meta);
+		// 枝切りハサミで破壊したのなら、葉ブロックとしてドロップする。
+		ItemStack dropItem = this.createStackedBlock(meta);
+		this.dropBlockAsItem(world, x, y, z, dropItem);
+		itemStack.damageItem(1, player);
 	}
 
 	/** シルクタッチが適用できるか。 */

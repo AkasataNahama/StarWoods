@@ -67,7 +67,7 @@ public class StarWoodsVEManager {
 		try {
 			file.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
-			bw.write("StarWoods:itemStarWoods,0,65536");
+			bw.write("StarWoods:material,0,65536");
 			bw.newLine();
 			bw.write("minecraft:golden_apple,1,16384");
 			bw.newLine();
