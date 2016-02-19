@@ -25,7 +25,7 @@ public class StarWoodsTree {
 		}
 		this.tier = tier;
 		this.color = color;
-		if (material != null && material.getItem() != null)
+		if (material != null && material.isValid())
 			isValid = true;
 	}
 

@@ -58,6 +58,8 @@ public class StarWoodsCore {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		long start = System.currentTimeMillis();
+		StarWoodsTreeManager.init();
+		StarWoodsVEManager.init();
 		StarWoodsRecipeCore.registerRecipes();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new StarWoodsGuiHandler());
 		wrapper.registerMessage(MExtractorDirection.Handler.class, MExtractorDirection.class, 0, Side.SERVER);
@@ -68,9 +70,7 @@ public class StarWoodsCore {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		long start = System.currentTimeMillis();
-		StarWoodsTreeManager.init();
-		StarWoodsVEManager.init();
-		StarWoodsRecipeCore.registerTreeRecipes();
+		StarWoodsRecipeCore.registerOtherRecipes();
 		Util.info("Complete Post Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
 	}
 

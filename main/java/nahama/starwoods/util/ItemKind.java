@@ -40,27 +40,41 @@ public class ItemKind {
 	}
 
 	public Item getItem() {
+		if (!this.isValid())
+			return null;
 		if (!isNamed)
 			return item;
 		return OreDictionary.getOres(name).get(0).getItem();
 	}
 
 	public int getMeta() {
+		if (!this.isValid())
+			return OreDictionary.WILDCARD_VALUE;
 		if (!isNamed)
 			return meta;
 		return OreDictionary.getOres(name).get(0).getItemDamage();
 	}
 
 	public ItemKind copy() {
+		if (!this.isValid())
+			return null;
 		if (!isNamed)
 			return new ItemKind(item, meta);
 		return new ItemKind(OreDictionary.getOres(name).get(0));
 	}
 
 	public ItemStack getSampleStack() {
+		if (!this.isValid())
+			return null;
 		if (!isNamed)
 			return new ItemStack(item, 1, meta);
 		return new ItemStack(OreDictionary.getOres(name).get(0).getItem(), 1, OreDictionary.getOres(name).get(0).getItemDamage());
+	}
+
+	public boolean isValid() {
+		if (!isNamed)
+			return item != null;
+		return name != null && OreDictionary.doesOreNameExist(name);
 	}
 
 	@Override

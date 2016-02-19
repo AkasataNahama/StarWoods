@@ -82,6 +82,15 @@ public class StarWoodsRecipeCore {
 		GameRegistry.addRecipe(new ShapedOreRecipe(ITEM.tapperDiamond,
 				" SM", "MMM", "M  ", 'S', new ItemStack(ITEM.material, 1, 0), 'M', "gemDiamond"));
 
+		// 木のレシピ
+		for (int i = 0; i < StarWoodsTreeManager.getAmountTreeKind(); i++) {
+			// 樹液から結晶へのレシピ
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ITEM.crystal, 1, i),
+					allx, allx, allx, 'X', new ItemStack(ITEM.sap, 1, i)));
+			// 原木から木炭へのレシピ
+			GameRegistry.addSmelting(StarWoodsTreeManager.getLogInstance(i), new ItemStack(Items.coal, 1, 1), 0.15F);
+		}
+
 		// 燃料
 		GameRegistry.registerFuelHandler(new IFuelHandler() {
 			@Override
@@ -102,20 +111,14 @@ public class StarWoodsRecipeCore {
 				return 0;
 			}
 		});
-
 	}
 
-	/** 木のレシピを登録する処理。 */
-	public static void registerTreeRecipes() {
+	/** 他MODと連携したレシピを登録する処理。 */
+	public static void registerOtherRecipes() {
 		for (int i = 0; i < StarWoodsTreeManager.getAmountTreeKind(); i++) {
-			// 樹液から結晶へのレシピ
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ITEM.crystal, 1, i),
-					allx, allx, allx, 'X', new ItemStack(ITEM.sap, 1, i)));
 			// 結晶から各種アイテムへのレシピ
 			GameRegistry.addRecipe(new ShapedOreRecipe(StarWoodsTreeManager.getProduct(i),
 					allx, allx, allx, 'X', new ItemStack(ITEM.crystal, 1, i)));
-			// 原木から苗木へのレシピ
-			GameRegistry.addSmelting(StarWoodsTreeManager.getLogInstance(i), new ItemStack(Items.coal, 1, 1), 0.15F);
 		}
 	}
 
