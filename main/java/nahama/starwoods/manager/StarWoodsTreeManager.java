@@ -46,8 +46,6 @@ public class StarWoodsTreeManager {
 				if (nameType == 2 && array.length > 4 && array[4].length() > 0)
 					meta = Integer.parseInt(array[4]);
 				StarWoodsTree tree = new StarWoodsTree(amountTreeKind, nameType, Integer.parseInt(array[1]), Integer.parseInt(array[2], 16), array[3], meta);
-				if (!tree.isValid())
-					continue;
 				treeList.add(tree);
 				if (amountTreeKind % SAPLING == 0) {
 					int instanceNum = amountTreeKind / SAPLING;
@@ -55,11 +53,6 @@ public class StarWoodsTreeManager {
 							.setBlockName("saplingStarWoods")
 							.setBlockTextureName("starwoods:sapling");
 					saplingList.add(sapling);
-					GameRegistry.registerBlock(sapling, ItemStarWoodsSapling.class, "sapling-" + instanceNum);
-					OreDictionary.registerOre("treeSapling", new ItemStack(sapling, 1, OreDictionary.WILDCARD_VALUE));
-					OreDictionary.registerOre("saplingStarWoods", new ItemStack(sapling, 1, OreDictionary.WILDCARD_VALUE));
-					if (isMFRLoaded)
-						StarWoodsMFRManager.registerSapling(instanceNum);
 				}
 				if (amountTreeKind % LOG == 0) {
 					int instanceNum = amountTreeKind / LOG;
@@ -67,11 +60,6 @@ public class StarWoodsTreeManager {
 							.setBlockName("logStarWoods")
 							.setBlockTextureName("log_oak");
 					logList.add(log);
-					GameRegistry.registerBlock(log, ItemStarWoodsLog.class, "log-" + instanceNum);
-					OreDictionary.registerOre("logWood", new ItemStack(log, 1, OreDictionary.WILDCARD_VALUE));
-					OreDictionary.registerOre("logStarWoods", new ItemStack(log, 1, OreDictionary.WILDCARD_VALUE));
-					if (isMFRLoaded)
-						StarWoodsMFRManager.registerLog(instanceNum);
 				}
 				if (amountTreeKind % LEAVES == 0) {
 					int instanceNum = amountTreeKind / LEAVES;
@@ -79,17 +67,36 @@ public class StarWoodsTreeManager {
 							.setBlockName("leavesStarWoods")
 							.setBlockTextureName("leaves_oak");
 					leavesList.add(leaves);
-					GameRegistry.registerBlock(leaves, ItemStarWoodsLeaves.class, "leaves-" + instanceNum);
-					OreDictionary.registerOre("treeLeaves", new ItemStack(leaves, 1, OreDictionary.WILDCARD_VALUE));
-					OreDictionary.registerOre("leavesStarWoods", new ItemStack(leaves, 1, OreDictionary.WILDCARD_VALUE));
-					if (isMFRLoaded)
-						StarWoodsMFRManager.registerLeaves(instanceNum);
 				}
 			} catch (Exception e) {
 				Util.error("Error on customizing tree. kind:" + amountTreeKind + " is invalid now.", "StarWoodsTreeManager");
 				continue;
 			}
 			amountTreeKind++;
+		}
+		for (int i = 0; i < saplingList.size(); i++) {
+			Block sapling = saplingList.get(i);
+			GameRegistry.registerBlock(sapling, ItemStarWoodsSapling.class, "sapling-" + i);
+			OreDictionary.registerOre("treeSapling", new ItemStack(sapling, 1, OreDictionary.WILDCARD_VALUE));
+			OreDictionary.registerOre("saplingStarWoods", new ItemStack(sapling, 1, OreDictionary.WILDCARD_VALUE));
+			if (isMFRLoaded)
+				StarWoodsMFRManager.registerSapling(i);
+		}
+		for (int i = 0; i < logList.size(); i++) {
+			Block log = logList.get(i);
+			GameRegistry.registerBlock(log, ItemStarWoodsLog.class, "log-" + i);
+			OreDictionary.registerOre("logWood", new ItemStack(log, 1, OreDictionary.WILDCARD_VALUE));
+			OreDictionary.registerOre("logStarWoods", new ItemStack(log, 1, OreDictionary.WILDCARD_VALUE));
+			if (isMFRLoaded)
+				StarWoodsMFRManager.registerLog(i);
+		}
+		for (int i = 0; i < leavesList.size(); i++) {
+			Block leaves = leavesList.get(i);
+			GameRegistry.registerBlock(leaves, ItemStarWoodsLeaves.class, "leaves-" + i);
+			OreDictionary.registerOre("treeLeaves", new ItemStack(leaves, 1, OreDictionary.WILDCARD_VALUE));
+			OreDictionary.registerOre("leavesStarWoods", new ItemStack(leaves, 1, OreDictionary.WILDCARD_VALUE));
+			if (isMFRLoaded)
+				StarWoodsMFRManager.registerLeaves(i);
 		}
 		CRYSTAL = amountTreeKind;
 	}
@@ -101,7 +108,7 @@ public class StarWoodsTreeManager {
 
 	/** 有効な番号か。 */
 	public static boolean isNumValid(int generalNum) {
-		return generalNum < amountTreeKind;
+		return generalNum < amountTreeKind && treeList.get(generalNum).isValid();
 	}
 
 	/** 材料から作れる木を返す。 */

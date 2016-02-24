@@ -99,8 +99,10 @@ public class BlockStarWoodsLeaves extends BlockLeaves {
 	@Override
 	public void harvestBlock(World world, EntityPlayer player, int x, int y, int z, int meta) {
 		ItemStack itemStack = player.getHeldItem();
-		if (itemStack == null)
+		if (itemStack == null) {
 			super.harvestBlock(world, player, x, y, z, meta);
+			return;
+		}
 		// プレイヤーが持っているアイテムを取得する。
 		Item usingItem = itemStack.getItem();
 		if (!(usingItem instanceof ItemPruningScissors)) {

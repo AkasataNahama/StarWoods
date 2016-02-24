@@ -39,7 +39,7 @@ public class ItemTapper extends Item {
 		world.setBlockMetadataWithNotify(x, y, z, meta % StarWoodsTreeManager.LOG, 2);
 		BlockStarWoodsLog log = (BlockStarWoodsLog) block;
 		int num = log.getGeneralNum(meta);
-		if (num >= StarWoodsTreeManager.getAmountTreeKind())
+		if (!StarWoodsTreeManager.isNumValid(num))
 			return true;
 		if (world.rand.nextInt(log.getChanceWithBonus((meta % StarWoodsTreeManager.LOG), level)) != 0)
 			return true;

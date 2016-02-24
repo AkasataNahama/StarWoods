@@ -143,7 +143,6 @@ public class BlockStarWoodsSapling extends BlockSapling {
 	/** 隣接するブロックが更新された時の処理。 */
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		super.onNeighborBlockChange(world, x, y, z, block);
 		this.checkAndDropBlock(world, x, y, z);
 	}
 

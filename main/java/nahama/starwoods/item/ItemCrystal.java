@@ -38,7 +38,7 @@ public class ItemCrystal extends Item {
 	@Override
 	public String getItemStackDisplayName(ItemStack itemStack) {
 		ItemStack product = StarWoodsTreeManager.getProduct(itemStack.getItemDamage() % StarWoodsTreeManager.CRYSTAL);
-		String name = "StarWoods.Default";
+		String name = "starwoods.unknown";
 		if (product != null)
 			name = product.getUnlocalizedName() + ".name";
 		return StatCollector.translateToLocal(name) + StatCollector.translateToLocal(this.getUnlocalizedName().substring(5));

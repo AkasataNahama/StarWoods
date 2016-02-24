@@ -80,7 +80,7 @@ public class BlockStarWoodsLog extends BlockLog {
 			return super.getDrops(world, x, y, z, meta, fortune);
 		int num = this.getGeneralNum(meta);
 		// 無効なら、通常の処理をする。
-		if (num >= StarWoodsTreeManager.getAmountTreeKind())
+		if (!StarWoodsTreeManager.isNumValid(num))
 			return super.getDrops(world, x, y, z, meta, fortune);
 		// 確率で樹液をドロップアイテムに加える。
 		ArrayList<ItemStack> ret = new ArrayList<ItemStack>();

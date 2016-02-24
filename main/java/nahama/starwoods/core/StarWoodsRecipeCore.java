@@ -117,6 +117,8 @@ public class StarWoodsRecipeCore {
 	public static void registerOtherRecipes() {
 		for (int i = 0; i < StarWoodsTreeManager.getAmountTreeKind(); i++) {
 			// 結晶から各種アイテムへのレシピ
+			if (!StarWoodsTreeManager.isNumValid(i))
+				continue;
 			GameRegistry.addRecipe(new ShapedOreRecipe(StarWoodsTreeManager.getProduct(i),
 					allx, allx, allx, 'X', new ItemStack(ITEM.crystal, 1, i)));
 		}
