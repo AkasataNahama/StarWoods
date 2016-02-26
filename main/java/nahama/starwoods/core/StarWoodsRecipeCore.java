@@ -88,7 +88,8 @@ public class StarWoodsRecipeCore {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ITEM.crystal, 1, i),
 					allx, allx, allx, 'X', new ItemStack(ITEM.sap, 1, i)));
 			// 原木から木炭へのレシピ
-			GameRegistry.addSmelting(StarWoodsTreeManager.getLogInstance(i), new ItemStack(Items.coal, 1, 1), 0.15F);
+			if (i % StarWoodsTreeManager.LOG == 0)
+				GameRegistry.addSmelting(StarWoodsTreeManager.getLogInstance(i), new ItemStack(Items.coal, 1, 1), 0.15F);
 		}
 
 		// 燃料
@@ -97,17 +98,17 @@ public class StarWoodsRecipeCore {
 			public int getBurnTime(ItemStack fuel) {
 				if (Block.getBlockFromItem(fuel.getItem()) instanceof BlockStarWoodsSapling)
 					return 100;
-				if (fuel.getItem() == ITEM.material) {
-					int damage = fuel.getItemDamage();
-					if (damage > 1) {
-						if (damage == 2)
-							return 12800;
-						if (damage == 3)
-							return 102400;
-						if (damage == 4)
-							return 819200;
-					}
-				}
+				if (fuel.getItem() != ITEM.material)
+					return 0;
+				int meta = fuel.getItemDamage();
+				if (meta < 1)
+					return 0;
+				if (meta == 1)
+					return 12800;
+				if (meta == 2)
+					return 102400;
+				if (meta == 3)
+					return 819200;
 				return 0;
 			}
 		});

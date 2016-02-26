@@ -39,10 +39,13 @@ public class TileEntityVEInjector extends TileEntity implements IVEMachine, ISid
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (worldObj.isRemote)
+		if (worldObj.isRemote || holdingVE < 1)
 			return;
-		if (holdingVE < 1 || !Util.isItemStackSapling(itemStacks[0]) || itemStacks[1] == null)
+		if (!Util.isItemStackSapling(itemStacks[0]) || itemStacks[1] == null) {
+			if (injectingTime > 0)
+				injectingTime = 0;
 			return;
+		}
 		int usingVE;
 		ItemStack result = null;
 		if (Block.getBlockFromItem(itemStacks[1].getItem()) instanceof BlockStarWoodsSapling) {
@@ -54,7 +57,8 @@ public class TileEntityVEInjector extends TileEntity implements IVEMachine, ISid
 		} else {
 			StarWoodsTree tree = StarWoodsTreeManager.getTreeFromMaterial(itemStacks[1]);
 			if (tree == null) {
-				injectingTime = 0;
+				if (injectingTime > 0)
+					injectingTime = 0;
 				return;
 			}
 			usingVE = StarWoodsVEManager.getVEFromTier(tree.getTier());

@@ -24,6 +24,7 @@ import nahama.starwoods.network.MExtractorDirection;
 import nahama.starwoods.util.Util;
 import net.minecraft.creativetab.CreativeTabs;
 
+/** @author Akasata Nahama */
 @Mod(modid = StarWoodsCore.MODID, name = StarWoodsCore.MODNAME, version = StarWoodsCore.VERSION)
 public class StarWoodsCore {
 
