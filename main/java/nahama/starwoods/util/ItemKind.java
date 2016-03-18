@@ -74,7 +74,7 @@ public class ItemKind {
 	public boolean isValid() {
 		if (!isNamed)
 			return item != null;
-		return name != null && OreDictionary.doesOreNameExist(name);
+		return name != null && OreDictionary.doesOreNameExist(name) && OreDictionary.getOres(name).size() > 0;
 	}
 
 	@Override
