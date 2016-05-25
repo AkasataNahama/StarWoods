@@ -2,9 +2,12 @@ package nahama.starwoods.inventory;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import nahama.starwoods.StarWoodsCore;
 import nahama.starwoods.manager.StarWoodsVEManager;
+import nahama.starwoods.network.MExtractorVE;
 import nahama.starwoods.tileentity.TileEntityVEExtractor;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
@@ -42,20 +45,24 @@ public class ContainerVEExtractor extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting iCrafting) {
 		super.addCraftingToCrafters(iCrafting);
-		iCrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
+		if (iCrafting instanceof EntityPlayerMP) {
+			StarWoodsCore.wrapper.sendTo(new MExtractorVE(tileEntity.getHoldingVE()), (EntityPlayerMP) iCrafting);
+		}
 		iCrafting.sendProgressBarUpdate(this, 1, tileEntity.getExtractingTime());
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); ++i) {
-			ICrafting icrafting = (ICrafting) crafters.get(i);
+		for (int i = 0; i < crafters.size(); i++) {
+			ICrafting iCrafting = (ICrafting) crafters.get(i);
 			if (lastHoldingVE != tileEntity.getHoldingVE()) {
-				icrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
+				if (iCrafting instanceof EntityPlayerMP) {
+					StarWoodsCore.wrapper.sendTo(new MExtractorVE(tileEntity.getHoldingVE()), (EntityPlayerMP) iCrafting);
+				}
 			}
 			if (lastExtractingTime != tileEntity.getExtractingTime()) {
-				icrafting.sendProgressBarUpdate(this, 1, tileEntity.getExtractingTime());
+				iCrafting.sendProgressBarUpdate(this, 1, tileEntity.getExtractingTime());
 			}
 		}
 		lastHoldingVE = tileEntity.getHoldingVE();
@@ -66,7 +73,7 @@ public class ContainerVEExtractor extends Container {
 	@SideOnly(Side.CLIENT)
 	public void updateProgressBar(int par1, int par2) {
 		if (par1 == 0) {
-			tileEntity.setHoldingVE(par2);;
+			tileEntity.setHoldingVE(par2);
 		}
 		if (par1 == 1) {
 			tileEntity.setExtractingTime(par2);

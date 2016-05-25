@@ -21,7 +21,7 @@ import nahama.starwoods.creativetab.StarWoodsTab;
 import nahama.starwoods.manager.StarWoodsTreeManager;
 import nahama.starwoods.manager.StarWoodsVEManager;
 import nahama.starwoods.network.MExtractorDirection;
-import nahama.starwoods.util.Util;
+import nahama.starwoods.network.MExtractorVE;
 import net.minecraft.creativetab.CreativeTabs;
 
 /** @author Akasata Nahama */
@@ -30,7 +30,7 @@ public class StarWoodsCore {
 
 	public static final String MODID = "StarWoods";
 	public static final String MODNAME = "Star Woods";
-	public static final String VERSION = "[1.7.10]Beta 1.1.1";
+	public static final String VERSION = "[1.7.10]Beta 1.1.2";
 
 	/** coreクラスのインスタンス */
 	@Instance(MODID)
@@ -47,32 +47,33 @@ public class StarWoodsCore {
 	/** 初期化前処理 */
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		long start = System.currentTimeMillis();
+		// long start = System.currentTimeMillis();
 		StarWoodsInfoCore.registerInfo(meta);
 		StarWoodsConfigCore.loadConfig(event);
 		StarWoodsItemCore.registerItems();
 		StarWoodsBlockCore.registerBlocks();
-		Util.info("Complete Pre Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
+		// Util.info("Complete Pre Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
 	}
 
 	/** 初期化処理 */
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		long start = System.currentTimeMillis();
+		// long start = System.currentTimeMillis();
 		StarWoodsTreeManager.init();
 		StarWoodsVEManager.init();
 		StarWoodsRecipeCore.registerRecipes();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new StarWoodsGuiHandler());
 		wrapper.registerMessage(MExtractorDirection.Handler.class, MExtractorDirection.class, 0, Side.SERVER);
-		Util.info("Complete Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
+		wrapper.registerMessage(MExtractorVE.Handler.class, MExtractorVE.class, 1, Side.CLIENT);
+		// Util.info("Complete Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
 	}
 
 	/** 初期化後処理 */
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		long start = System.currentTimeMillis();
+		// long start = System.currentTimeMillis();
 		StarWoodsRecipeCore.registerOtherRecipes();
-		Util.info("Complete Post Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
+		// Util.info("Complete Post Initialization. Time : " + (System.currentTimeMillis() - start) + " ms", "StarWoodsCore");
 	}
 
 }

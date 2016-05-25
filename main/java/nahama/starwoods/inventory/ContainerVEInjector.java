@@ -2,9 +2,12 @@ package nahama.starwoods.inventory;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import nahama.starwoods.StarWoodsCore;
+import nahama.starwoods.network.MExtractorVE;
 import nahama.starwoods.tileentity.TileEntityVEInjector;
 import nahama.starwoods.util.Util;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
@@ -44,20 +47,24 @@ public class ContainerVEInjector extends Container {
 	@Override
 	public void addCraftingToCrafters(ICrafting iCrafting) {
 		super.addCraftingToCrafters(iCrafting);
-		iCrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
+		if (iCrafting instanceof EntityPlayerMP) {
+			StarWoodsCore.wrapper.sendTo(new MExtractorVE(tileEntity.getHoldingVE()), (EntityPlayerMP) iCrafting);
+		}
 		iCrafting.sendProgressBarUpdate(this, 1, tileEntity.getInjectingTime());
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); ++i) {
-			ICrafting icrafting = (ICrafting) crafters.get(i);
+		for (int i = 0; i < crafters.size(); i++) {
+			ICrafting iCrafting = (ICrafting) crafters.get(i);
 			if (lastHoldingVE != tileEntity.getHoldingVE()) {
-				icrafting.sendProgressBarUpdate(this, 0, tileEntity.getHoldingVE());
+				if (iCrafting instanceof EntityPlayerMP) {
+					StarWoodsCore.wrapper.sendTo(new MExtractorVE(tileEntity.getHoldingVE()), (EntityPlayerMP) iCrafting);
+				}
 			}
 			if (lastInjectingTime != tileEntity.getInjectingTime()) {
-				icrafting.sendProgressBarUpdate(this, 1, tileEntity.getInjectingTime());
+				iCrafting.sendProgressBarUpdate(this, 1, tileEntity.getInjectingTime());
 			}
 		}
 		lastHoldingVE = tileEntity.getHoldingVE();
